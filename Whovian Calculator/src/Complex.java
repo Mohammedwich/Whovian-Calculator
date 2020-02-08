@@ -27,7 +27,7 @@ public class Complex extends Number
 		imaginaryNumber = x;
 	}
 	
-	
+	//TODO: remove the zero and 1 coefficient from i
 	public String toString()
 	{
 		StringBuilder string = new StringBuilder();

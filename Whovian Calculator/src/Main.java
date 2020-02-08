@@ -5,43 +5,16 @@ public class Main
 	public static void main(String args[])
 	{
 	
-		Number one = new Number();
-		Number two = new Number(6);
+		Number one = new Number(1);
+		Number two = new Number(3);
 		Complex three = new Complex();
-		Complex four = new Complex(0,5);
-		Complex five = new Complex(5,4);
+		Complex four = new Complex(2,1);
+		Complex five = new Complex(5,6);
 		
-		String string1 = one.toString();
-		String string2 = two.toString();
-		String string3 = three.toString();
-		String string4 = four.toString();
-		String string5 = five.toString();
+		Number test1 = multiply(four, five);
+		String test1String = test1.toString();
 		
-		System.out.println(string1);
-		System.out.println(string2);
-		System.out.println(string3);
-		System.out.println(string4);
-		System.out.println(string5 + "\n");
-		
-		Boolean test1 = lessThan(two, four);
-		Boolean test2 = greaterThan(two, four);
-		Boolean test3 = equals(two, four);
-		
-		System.out.println(test1);
-		System.out.println(test2);
-		System.out.println(test3 + "\n");
-		
-		Boolean test4 = lessThan(four, five);
-		Boolean test5 = greaterThan(four, five);
-		Boolean test6 = equals(four, five);
-		
-		System.out.println(test4);
-		System.out.println(test5);
-		System.out.println(test6 + "\n");
-		
-		double real = five.getRealNumber();
-		double imaginary = five.getImaginaryNumber();
-		System.out.println(real + " " + imaginary + "\n");
+		System.out.println("Test1 is: " + test1String);
 		
 		//TODO: Fix the can't cast returned object from subtract issue
 		
@@ -57,15 +30,7 @@ public class Main
 	
 	// Checks parameter types and subtracts their members accordingly then returns a new object with the new values
 	static Number subtract(Object first, Object second)
-	{
-		if((first instanceof Number) && (second instanceof Number) )
-		{
-			double real = ((Number)first).getRealNumber() - ((Number)second).getRealNumber();
-			
-			Number result = new Number(real);
-			return result;
-		}
-		
+	{		
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
 			double real = ((Complex)first).getRealNumber() - ((Complex)second).getRealNumber();
@@ -93,6 +58,14 @@ public class Main
 			return result;
 		}
 		
+		if((first instanceof Number) && (second instanceof Number) )
+		{
+			double real = ((Number)first).getRealNumber() - ((Number)second).getRealNumber();
+			
+			Number result = new Number(real);
+			return result;
+		}
+		
 		//This part is here to shut the compiler up about the function having no return value(in case none of the ifs work)
 		else
 		{
@@ -107,14 +80,6 @@ public class Main
 	// Checks parameter types and multiplies the numbers and returns a new Number object with the result
 	static Number multiply(Object first, Object second)
 	{
-		if((first instanceof Number) && (second instanceof Number) )
-		{
-			double real = ((Number)first).getRealNumber() * ((Number)second).getRealNumber();
-			
-			Number result = new Number(real);
-			return result;
-		}
-		
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
 			double real = ((Complex)first).getRealNumber() * ((Complex)second).getRealNumber()
@@ -144,6 +109,15 @@ public class Main
 			Number result = new Complex(real, imaginary);
 			return result;
 		}
+		
+		if((first instanceof Number) && (second instanceof Number) )
+		{
+			double real = ((Number)first).getRealNumber() * ((Number)second).getRealNumber();
+			
+			Number result = new Number(real);
+			return result;
+		}
+		
 		
 		//This part is here to shut the compiler up about the function having no return value(in case none of the ifs work)
 		else
