@@ -60,11 +60,13 @@ public class Main
 			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
 			
 			//skip line if invalid operator
-			if(operation != "+" && operation != "-" && operation != "*" && operation != "/" && operation != "<" && 
-					operation != ">" && operation != "=" )
+			
+			if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
+					!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
 			{
 				continue;
 			}
+			
 			
 			//skip line if any non-i characters are in the line
 			for(String currentChar : invalidLetters)
