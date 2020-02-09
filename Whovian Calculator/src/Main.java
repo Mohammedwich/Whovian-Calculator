@@ -218,7 +218,49 @@ public class Main
 	//TODO: Implement this
 	static Number add(Object first, Object second)
 	{
-		return new Number();
+		if((first instanceof Complex) && (second instanceof Complex) )
+		{
+			double real = ((Complex)first).getRealNumber() + ((Complex)second).getRealNumber();
+			double imaginary = ((Complex)first).getImaginaryNumber() + ((Complex)second).getImaginaryNumber();
+			
+			Number result = new Complex(real, imaginary);
+			return result;
+		}
+		
+		if((first instanceof Number) && (second instanceof Complex) )
+		{
+			double real = ((Number)first).getRealNumber() + ((Complex)second).getRealNumber();
+			double imaginary = 0 + ((Complex)second).getImaginaryNumber();
+			
+			Number result = new Complex(real, imaginary);
+			return result;
+		}
+		
+		if((first instanceof Complex) && (second instanceof Number) )
+		{
+			double real = ((Complex)first).getRealNumber() + ((Number)second).getRealNumber();
+			double imaginary = ((Complex)first).getImaginaryNumber();
+			
+			Number result = new Complex(real, imaginary);
+			return result;
+		}
+		
+		if((first instanceof Number) && (second instanceof Number) )
+		{
+			double real = ((Number)first).getRealNumber() + ((Number)second).getRealNumber();
+			
+			Number result = new Number(real);
+			return result;
+		}
+		
+		//This part is here to shut the compiler up about the function having no return value(in case none of the ifs work)
+		else
+		{
+			System.out.println("Error in subtract function. The two parameters do not meet any of the case types.");
+			System.out.println("A Number object with value zero has been returned");
+			System.out.flush();
+			return new Number();
+		}
 	}	// add() end
 	
 	
