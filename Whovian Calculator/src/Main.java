@@ -215,7 +215,6 @@ public class Main
 	//************************************************************************************************
 	
 	
-	//TODO: Implement this
 	static Number add(Object first, Object second)
 	{
 		if((first instanceof Complex) && (second instanceof Complex) )
@@ -372,11 +371,10 @@ public class Main
 		return new Number();
 	} // divide() end
 	
-	
-	//TODO: Implement this
+
 	static Complex conjugate(Complex theNum)
 	{
-		return new Complex();
+		return new Complex(theNum.getRealNumber(), (-1*theNum.getImaginaryNumber()) );
 	} // conjugate() end
 
 	
