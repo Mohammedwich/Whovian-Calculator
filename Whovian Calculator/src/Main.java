@@ -12,6 +12,8 @@ public class Main
 {
 	public static void main(String args[]) throws IOException 
 	{
+		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
+				,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 		String fileName;
 		Scanner inputScanner = new Scanner(System.in);
 		
@@ -56,6 +58,22 @@ public class Main
 			String operation = lineReader.next();
 			String secondWord = lineReader.next();
 			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
+			
+			//skip line if invalid operator
+			if(operation != "+" && operation != "-" && operation != "*" && operation != "/" && operation != "<" && 
+					operation != ">" && operation != "=" )
+			{
+				continue;
+			}
+			
+			//skip line if any non-i characters are in the line
+			for(String currentChar : invalidLetters)
+			{
+				if(currentLine.contains(currentChar))
+				{
+					continue;
+				}
+			}
 			
 			// These will hold the parsed numbers
 			double firstReal = 0;
