@@ -1,6 +1,6 @@
 //	Mohammed Ahmed 		msa190000
 
-
+//TODO: remove unused import if not needed
 import java.math.BigDecimal;	//Used to format the double in the toString() function to have 2 decimal places
 import java.math.RoundingMode;
 
@@ -44,8 +44,13 @@ public class Complex extends Number
 		if(imaginaryNumber < 0)
 		{
 			string.append("-");
-			BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
-			string.append(theNum); //TODO: don't put in 1 or 0 coefficients
+			
+			if(imaginaryNumber != -1)	// Don't append coefficient when it is -1
+			{
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				string.append(theNum);
+			}
+			
 			string.append("i");
 		}
 		else if(imaginaryNumber >= 0)
@@ -54,8 +59,13 @@ public class Complex extends Number
 			{
 				string.append("+");
 			}
-			BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
-			string.append(theNum);
+			
+			if(imaginaryNumber != 1)	// Don't append coefficient when it is 1
+			{
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				string.append(theNum);
+			}
+			
 			string.append("i");
 		}
 		
