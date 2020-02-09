@@ -41,7 +41,7 @@ public class Complex extends Number
 		if(imaginaryNumber < 0)
 		{
 			string.append("-");
-			string.append(Math.abs(imaginaryNumber));
+			string.append(Math.abs(imaginaryNumber)); //TODO: don't put in 1 or 0 coefficients
 			string.append("i");
 		}
 		else if(imaginaryNumber >= 0)

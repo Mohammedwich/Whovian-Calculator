@@ -1,25 +1,219 @@
 //	Mohammed Ahmed 		msa190000
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+
+
 public class Main 
 {
-	public static void main(String args[])
+	public static void main(String args[]) throws IOException 
 	{
+		String fileName;
+		Scanner inputScanner = new Scanner(System.in);
+		
+		System.out.println("Enter a file name to process: ");
+		fileName = inputScanner.nextLine();		
 	
-		Number one = new Number(1);
-		Number two = new Number(3);
-		Complex three = new Complex();
-		Complex four = new Complex(2,1);
-		Complex five = new Complex(5,6);
+		File inputfile = new File(fileName);
+		File outputFile = new File("results.txt");
 		
-		Number test1 = multiply(four, five);
-		String test1String = test1.toString();
+		//Verify input file exists before using it. If not, exit.
+		if(!inputfile.exists())
+		{
+			System.out.println("Input file does not exist");
+			System.exit(-1);
+		}
 		
-		System.out.println("Test1 is: " + test1String);
+		//Try to create output file. Print message and exit program if it fails if it fails.
+		try
+		{
+			outputFile.createNewFile();
+		} catch (IOException e)
+		{
+			System.out.println("Error creating output file");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		
-		//TODO: Fix the can't cast returned object from subtract issue
+		//Binding Scanner and FileWriter
+		Scanner fileReader = new Scanner(inputfile);
+		FileWriter writer = new FileWriter(outputFile);
+		
+		
+		//This loop will process each line, create Number objects with the data, perform operation on them, then write the
+		// original line followed by \t and the operation result into the output file.
+		while(fileReader.hasNextLine())
+		{
+			String currentLine = fileReader.nextLine();
+			Scanner lineReader = new Scanner(currentLine);
+			
+			//first and second word will hold the values as strings
+			String firstWord = lineReader.next();
+			String operation = lineReader.next();
+			String secondWord = lineReader.next();
+			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
+			
+			// These will hold the parsed numbers
+			double firstReal = 0;
+			double firstImaginary = 1;	// Set to 1 so we can pass a 1 if just i
+			double secondReal = 0;
+			double secondImaginary = 1;
+			
+			// These will hold the created object that will be constructed using first/secondValue
+			Number firstNumber;
+			Number secondNumber;	
+			Number resultNumber;
+			Boolean resultBool;
+			
+			// Parse the first word and create a number object out of the data
+			if(!(firstWord.contains("i")) )
+			{
+				firstReal = Double.parseDouble(firstWord);
+				firstNumber = new Number(firstReal);
+			}
+			else
+			{
+				firstWord = firstWord.replace("+", " ");
+				firstWord = firstWord.replace("-", " -");
+				firstWord = firstWord.replaceFirst("i", " ");
+				//if we have more than 1 i character, skip line
+				if(firstWord.contains("i"))
+				{
+					continue;
+				}
+				
+				Scanner wordReader = new Scanner(firstWord);
+				
+				firstReal = Double.parseDouble(wordReader.next() );
+				
+				//Test if there was a number or only an i, if only i set imaginary to 1
+				try
+				{
+					tempWord = wordReader.next(); // In case we have a minus sign by itself
+					firstImaginary = Double.parseDouble(tempWord);
+				}
+				catch(Exception e)
+				{
+					if(tempWord.equals("-"))
+					{
+						firstImaginary = -1.0;
+					}
+					else
+					{
+						firstImaginary = 1.0;
+					}
+				}
+				
+				firstNumber = new Complex(firstReal, firstImaginary);
+				wordReader.close();
+				
+			} // end of parsing first word and creating first number
+			
+			
+			// Parse the second word and create a number object out of the data
+			if(!(secondWord.contains("i")) )
+			{
+				secondReal = Double.parseDouble(secondWord);
+				secondNumber = new Number(secondReal);
+			}
+			else
+			{
+				secondWord = secondWord.replace("+", " ");
+				secondWord = secondWord.replace("-", " -");
+				secondWord = secondWord.replaceFirst("i", " ");
+				//if we have more than 1 i character, skip line
+				if(secondWord.contains("i"))
+				{
+					continue;
+				}
+				
+				Scanner wordReader = new Scanner(secondWord);
+				
+				secondReal = Double.parseDouble(wordReader.next() );
+				
+				//Test if there was a number or only an i, if only i set imaginary to 1
+				try
+				{
+					tempWord = wordReader.next(); // In case we have a minus sign by itself
+					secondImaginary = Double.parseDouble(tempWord);
+				}
+				catch(Exception e)
+				{
+					if(tempWord.equals("-"))
+					{
+						secondImaginary = -1.0;
+					}
+					else
+					{
+						secondImaginary = 1.0;
+					}
+				}
+				
+				secondNumber = new Complex(secondReal, secondImaginary);
+				wordReader.close();
+				
+			} // end of parsing second word and creating second number
+			
+			
+			//Perform the appropriate operation on both numbers
+			switch(operation)
+			{
+			case "+":
+				resultNumber = add(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "-":
+				resultNumber = subtract(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "*":
+				resultNumber = multiply(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "/":
+				resultNumber = divide(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "<":
+				resultBool = lessThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case ">":
+				resultBool = greaterThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case "=":
+				resultBool = equals(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+			}
+			
+			
+			lineReader.close();
+		} // end of while loop, current line processing
+		
 		
 	
+		//TODO: close scanners
+		inputScanner.close();
+		fileReader.close();
+		writer.close();
 	}	// main end
+	
+	
+	// Functions
+	//************************************************************************************************
+	
 	
 	//TODO: Implement this
 	static Number add(Object first, Object second)
