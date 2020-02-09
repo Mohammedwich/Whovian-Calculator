@@ -1,5 +1,8 @@
 //	Mohammed Ahmed 		msa190000
 
+import java.math.BigDecimal;	//Used to format the double in the toString() function to have 2 decimal places
+import java.math.RoundingMode;
+
 public class Number 
 {
 	public Number()
@@ -27,7 +30,8 @@ public class Number
 	public String toString()
 	{
 		StringBuilder string = new StringBuilder();
-		string.append(realNumber);
+		BigDecimal theNum = new BigDecimal(realNumber).setScale(2);
+		string.append(theNum);
 		
 		String result = string.toString();
 		return result;
