@@ -178,7 +178,14 @@ public class Main
 				break;
 				
 			case "/":
+				try //In case a zero division happens
+				{
 				resultNumber = divide(firstNumber, secondNumber);
+				}
+				catch (ArithmeticException e)
+				{
+					continue;
+				}
 				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
 				break;
 				
@@ -211,10 +218,13 @@ public class Main
 	}	// main end
 	
 	
+	
 	// Functions
+	// Note: In the case that these functions are fed Objects that are not Number or Complex type, they will return a default Number object
 	//************************************************************************************************
 	
 	
+	// Checks parameter types and adds their members accordingly then returns a new object with the new values
 	static Number add(Object first, Object second)
 	{
 		if((first instanceof Complex) && (second instanceof Complex) )
@@ -255,7 +265,7 @@ public class Main
 		//This part is here to shut the compiler up about the function having no return value(in case none of the ifs work)
 		else
 		{
-			System.out.println("Error in subtract function. The two parameters do not meet any of the case types.");
+			System.out.println("Error in add function. The two parameters do not meet any of the case types.");
 			System.out.println("A Number object with value zero has been returned");
 			System.out.flush();
 			return new Number();
@@ -364,17 +374,65 @@ public class Main
 		}
 	} // multiply() end
 
-
-	//TODO: Implement this
+	// Checks parameter types and divides the numbers and returns a new Number object with the result
+	//The switch in main handles any strange division by zero occurrence. The way this function is set up, it can't divide by zero
 	static Number divide(Object first, Object second)
 	{
-		return new Number();
+		if((first instanceof Complex) && (second instanceof Complex) )
+		{
+			Complex result = (Complex)multiply(first, conjugate(second));
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			
+			result.setRealNumber(result.getRealNumber() / divisor);
+			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);
+			
+			return result;
+		}
+		
+		if((first instanceof Number) && (second instanceof Complex) )
+		{
+			Complex result = (Complex)multiply(first, conjugate(second));
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			
+			result.setRealNumber(result.getRealNumber() / divisor);
+			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);
+			
+			return result;
+		}
+		
+		if((first instanceof Complex) && (second instanceof Number) )
+		{
+			double divisor = ((Number)second).getRealNumber();
+			
+			double real = ((Complex)first).getRealNumber() / divisor;
+			double imaginary = ((Complex)first).getImaginaryNumber() / divisor;
+			
+			Number result = new Complex(real, imaginary);
+			return result;
+		}
+		
+		if((first instanceof Number) && (second instanceof Number) )
+		{
+			double real = ((Number)first).getRealNumber() / ((Number)second).getRealNumber();
+			
+			Number result = new Number(real);
+			return result;
+		}
+		
+		//This part is here to shut the compiler up about the function having no return value(in case none of the ifs work)
+		else
+		{
+			System.out.println("Error in divide function. The two parameters do not meet any of the case types.");
+			System.out.println("A Number object with value zero has been returned");
+			System.out.flush();
+			return new Number();
+		}
 	} // divide() end
 	
 
-	static Complex conjugate(Complex theNum)
+	static Complex conjugate(Object theNum)
 	{
-		return new Complex(theNum.getRealNumber(), (-1*theNum.getImaginaryNumber()) );
+		return new Complex(((Complex)theNum).getRealNumber(), (-1*((Complex)theNum).getImaginaryNumber()) );
 	} // conjugate() end
 
 	
