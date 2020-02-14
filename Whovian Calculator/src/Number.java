@@ -1,7 +1,6 @@
 //	Mohammed Ahmed 		msa190000
 
-//TODO: remove unused import if not needed
-//TODO: round up to 2 decimals
+
 import java.math.BigDecimal;	//Used to format the double in the toString() function to have 2 decimal places
 import java.math.RoundingMode;
 
@@ -64,7 +63,7 @@ public class Number
 			}
 		}
 		
-		return false; //Incase none of the cases match for some reason
+		return false; //In case none of the cases match for some reason
 		
 	}
 	

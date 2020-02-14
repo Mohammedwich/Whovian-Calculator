@@ -12,14 +12,12 @@ import java.util.regex.Matcher;
 
 public class Main 
 {
-	//TODO: Do something about extra numbers on the line
-	//TODO: Do something about numbers like 3.5.6.7 multidecimals
-	//TODO: See about formatting on FileWriter
-	//TODO: remove messages in catch blocks
 	public static void main(String args[]) throws IOException 
 	{
+		// This array will be used to skip lines containing these characters
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
 				,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+		
 		String fileName;
 		Scanner inputScanner = new Scanner(System.in);
 		
@@ -75,8 +73,8 @@ public class Main
 			}
 			catch(NoSuchElementException e)
 			{
-				System.out.println("NoSuchElement exception: Invalid number of operands. Skipping line.");
-				System.out.flush();
+				// Skip line if number of operands+operator less than 3. ex: one or two words on a line
+				e.printStackTrace();
 				continue;
 			}
 			
@@ -127,7 +125,7 @@ public class Main
 				{
 					firstWord = firstWord.replace("+", " ");
 					firstWord = firstWord.replace("-", " -");
-					firstWord = firstWord.replaceFirst("i", ""); //TODO: remove this line if needed after fixing issue with single imaginary
+					firstWord = firstWord.replaceFirst("i", "");
 					
 					//if we have more than 1 i character, skip line					
 					if(firstWord.contains("i"))
@@ -152,13 +150,14 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
+						
+						//Skip lines that have individual numbers with two or more decimal points in them
 						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
 						Matcher theMatcher = thePattern.matcher(tempWord);
 						boolean containsPattern = theMatcher.find();
-						
 						if(containsPattern == true)
 						{
-							System.out.println("skipped a line with multidecimal");
 							continue;
 						}
 						
@@ -211,13 +210,14 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
+						
+						//Skip lines that have individual numbers with two or more decimal points in them
 						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
 						Matcher theMatcher = thePattern.matcher(tempWord);
 						boolean containsPattern = theMatcher.find();
-						
 						if(containsPattern == true)
 						{
-							System.out.println("skipped a line with multidecimal");
 							continue;
 						}
 						
@@ -238,14 +238,14 @@ public class Main
 			}
 			catch(NumberFormatException e)
 			{
-				System.out.println("Line will be skipped due to a NumberFormatException in the word parsing process");
-				System.out.flush();
+				//Line will be skipped due to a NumberFormatException in the word parsing process
+				e.printStackTrace();
 				continue;
 			}
 			catch(Exception e)
 			{
-				System.out.println("Line will be skipped due to a some exception in the word parsing process");
-				System.out.flush();
+				// Line will be skipped due to a some exception in the word parsing process
+				e.printStackTrace();
 				continue;
 			}
 			
@@ -275,6 +275,7 @@ public class Main
 				}
 				catch (ArithmeticException e)
 				{
+					e.printStackTrace();
 					continue;
 				}
 				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
@@ -302,8 +303,7 @@ public class Main
 		} // end of while loop, current line processing
 		
 		
-	
-		//TODO: close scanners
+		
 		inputScanner.close();
 		fileReader.close();
 		writer.close();
@@ -414,7 +414,6 @@ public class Main
 	} // subtract() end
 	
 	
-	//TODO: see about the i's nullifying themselves and returning a proper result
 	// Checks parameter types and multiplies the numbers and returns a new Number object with the result
 	static Number multiply(Object first, Object second)
 	{
