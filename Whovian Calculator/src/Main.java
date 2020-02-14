@@ -11,6 +11,9 @@ import java.util.Scanner;
 public class Main 
 {
 	//TODO: Do something about extra numbers on the line
+	//TODO: Do something about numbers like 3.5.6.7
+	//TODO: See about formatting on FileWriter
+	//TODO: Magnitude is only used for less than and greater than; for equality, you need to check that the two real components are equal and the two imaginary components are equal.
 	public static void main(String args[]) throws IOException 
 	{
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
