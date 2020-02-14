@@ -1,19 +1,21 @@
 //	Mohammed Ahmed 		msa190000
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 
 
 public class Main 
 {
 	//TODO: Do something about extra numbers on the line
-	//TODO: Do something about numbers like 3.5.6.7
+	//TODO: Do something about numbers like 3.5.6.7 multidecimals
 	//TODO: See about formatting on FileWriter
+	//TODO: remove messages in catch blocks
 	public static void main(String args[]) throws IOException 
 	{
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
@@ -150,11 +152,21 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
+						Matcher theMatcher = thePattern.matcher(tempWord);
+						boolean containsPattern = theMatcher.find();
+						
+						if(containsPattern == true)
+						{
+							System.out.println("skipped a line with multidecimal");
+							continue;
+						}
+						
 						if(tempWord.equals("-"))
 						{
 							firstImaginary = -1.0;
 						}
-						else
+						else if(tempWord.equals(""))
 						{
 							firstImaginary = 1.0;
 						}
@@ -199,6 +211,16 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
+						Matcher theMatcher = thePattern.matcher(tempWord);
+						boolean containsPattern = theMatcher.find();
+						
+						if(containsPattern == true)
+						{
+							System.out.println("skipped a line with multidecimal");
+							continue;
+						}
+						
 						if(tempWord.equals("-"))
 						{
 							secondImaginary = -1.0;
