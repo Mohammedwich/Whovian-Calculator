@@ -1,7 +1,6 @@
 //	Mohammed Ahmed 		msa190000
 
-//TODO: remove unused import if not needed
-//TODO: round up to 2 decimals
+
 import java.math.BigDecimal;	//Used to format the double in the toString() function to have 2 decimal places
 import java.math.RoundingMode;
 
@@ -30,14 +29,14 @@ public class Complex extends Number
 		imaginaryNumber = x;
 	}
 	
-	//TODO: remove the zero and 1 coefficient from i
+
 	public String toString()
 	{
 		StringBuilder string = new StringBuilder();
 		
 		if(realNumber != 0)
 		{
-			BigDecimal theNum = new BigDecimal(getRealNumber()).setScale(2);
+			BigDecimal theNum = new BigDecimal(getRealNumber()).setScale(2, RoundingMode.HALF_UP);
 			string.append(theNum);	//append real part to the string, can be zero
 		}
 		
@@ -48,7 +47,7 @@ public class Complex extends Number
 			
 			if(imaginaryNumber != -1)	// Don't append coefficient when it is -1
 			{
-				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2, RoundingMode.HALF_UP);
 				string.append(theNum);
 			}
 			
@@ -63,7 +62,7 @@ public class Complex extends Number
 			
 			if(imaginaryNumber != 1)	// Don't append coefficient when it is 1
 			{
-				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2, RoundingMode.HALF_UP);
 				string.append(theNum);
 			}
 			
@@ -76,19 +75,26 @@ public class Complex extends Number
 	}
 	
 	
-	public boolean equals(String someComplex)
+	public boolean equals(Object someObject)
 	{
-		String thisObject = this.toString();
-		int checkResult = thisObject.compareTo(someComplex);
-		
-		if(checkResult == 0)
-		{
-			return true;
-		}
-		else
+		if(!(someObject instanceof Complex))
 		{
 			return false;
 		}
+		
+		if(someObject instanceof Complex)
+		{
+			if(realNumber == ((Complex)someObject).getRealNumber() && imaginaryNumber ==  ((Complex)someObject).getImaginaryNumber())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		return false;	//return false if no cases met
 	}
 	
 	

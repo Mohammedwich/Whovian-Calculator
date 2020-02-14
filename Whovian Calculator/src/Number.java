@@ -1,7 +1,6 @@
 //	Mohammed Ahmed 		msa190000
 
-//TODO: remove unused import if not needed
-//TODO: round up to 2 decimals
+
 import java.math.BigDecimal;	//Used to format the double in the toString() function to have 2 decimal places
 import java.math.RoundingMode;
 
@@ -32,7 +31,7 @@ public class Number
 	public String toString()
 	{
 		StringBuilder string = new StringBuilder();
-		BigDecimal theNum = new BigDecimal(realNumber).setScale(2);
+		BigDecimal theNum = new BigDecimal(realNumber).setScale(2, RoundingMode.HALF_UP);
 		string.append(theNum);
 		
 		String result = string.toString();
@@ -40,16 +39,32 @@ public class Number
 	}
 	
 	
-	public boolean equals(double someNum)
+	public boolean equals(Object someObject)
 	{
-		if(realNumber == someNum)
-		{
-			return true;
-		}
-		else
+		if(someObject instanceof Complex)
 		{
 			return false;
 		}
+		
+		if(!(someObject instanceof Number))
+		{
+			return false;
+		}
+		
+		if(someObject instanceof Number)
+		{
+			if(realNumber == ((Number)someObject).getRealNumber() )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		return false; //In case none of the cases match for some reason
+		
 	}
 	
 	public boolean equals(String someNum)

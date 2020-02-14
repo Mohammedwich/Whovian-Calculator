@@ -1,23 +1,23 @@
 //	Mohammed Ahmed 		msa190000
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 
 
 public class Main 
 {
-	//TODO: Do something about extra numbers on the line
-	//TODO: Do something about numbers like 3.5.6.7
-	//TODO: See about formatting on FileWriter
-	//TODO: Magnitude is only used for less than and greater than; for equality, you need to check that the two real components are equal and the two imaginary components are equal.
 	public static void main(String args[]) throws IOException 
 	{
+		// This array will be used to skip lines containing these characters
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
 				,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+		
 		String fileName;
 		Scanner inputScanner = new Scanner(System.in);
 		
@@ -54,52 +54,67 @@ public class Main
 		// original line followed by \t and the operation result into the output file.
 		while(fileReader.hasNextLine())
 		{
+			String currentLine = fileReader.nextLine();
+			Scanner lineReader = new Scanner(currentLine);
+			
+			//first and second word will hold the values as strings
+			String firstWord;
+			String operation;
+			String secondWord;
+			String tempWord; //Will be used to hold minus sign or a full number when setting the imaginary part
+			
+			//Skip line if we don't have enough operands to work with
 			try
 			{
-				String currentLine = fileReader.nextLine();
-				Scanner lineReader = new Scanner(currentLine);
-				
-				//first and second word will hold the values as strings
-				String firstWord = lineReader.next();
-				String operation = lineReader.next();
-				String secondWord = lineReader.next();
-				String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
-				
-				//skip line if invalid operator
-				
-				if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
-						!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
+				firstWord = lineReader.next();
+				operation = lineReader.next();
+				secondWord = lineReader.next();
+				tempWord = "";
+			}
+			catch(NoSuchElementException e)
+			{
+				// Skip line if number of operands+operator less than 3. ex: one or two words on a line
+				e.printStackTrace();
+				continue;
+			}
+			
+			//skip line if invalid operator
+			if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
+					!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
+			{
+				continue;
+			}
+			
+			
+			//skip line if any non-i characters are in the line
+			Boolean skipFlag = false;
+			for(String currentChar : invalidLetters)
+			{
+				if(currentLine.contains(currentChar))
 				{
-					continue;
+					skipFlag = true;
 				}
-				
-				
-				//skip line if any non-i characters are in the line
-				Boolean skipFlag = false;
-				for(String currentChar : invalidLetters)
-				{
-					if(currentLine.contains(currentChar))
-					{
-						skipFlag = true;
-					}
-				}
-				if(skipFlag == true)
-				{
-					continue;
-				}
-				
-				// These will hold the parsed numbers
-				double firstReal = 0;
-				double firstImaginary = 1;	// Set to 1 so we can pass a 1 if just i
-				double secondReal = 0;
-				double secondImaginary = 1;
-				
-				// These will hold the created object that will be constructed using first/secondValue
-				Number firstNumber;
-				Number secondNumber;	
-				Number resultNumber;
-				Boolean resultBool;
-				
+			}
+			if(skipFlag == true)
+			{
+				continue;
+			}
+			
+			// These will hold the parsed numbers
+			double firstReal = 0;
+			double firstImaginary = 0;
+			double secondReal = 0;
+			double secondImaginary = 0;
+			
+			// These will hold the created object that will be constructed using first/secondValue
+			Number firstNumber;
+			Number secondNumber;	
+			Number resultNumber;
+			Boolean resultBool;
+			
+			//skip line if the parsing process throws an exception
+			try
+			{
 				// Parse the first word and create a number object out of the data
 				if(!(firstWord.contains("i")) )
 				{
@@ -110,16 +125,22 @@ public class Main
 				{
 					firstWord = firstWord.replace("+", " ");
 					firstWord = firstWord.replace("-", " -");
-					firstWord = firstWord.replaceFirst("i", " ");
-					//if we have more than 1 i character, skip line
+					firstWord = firstWord.replaceFirst("i", "");
+					
+					//if we have more than 1 i character, skip line					
 					if(firstWord.contains("i"))
 					{
 						continue;
 					}
 					
+					
 					Scanner wordReader = new Scanner(firstWord);
 					
-					firstReal = Double.parseDouble(wordReader.next() );
+					//Check to see if there are two parts to the number so we don't put a lone imaginary in the realNumber part
+					if(firstWord.contains(" "))
+					{
+						firstReal = Double.parseDouble(wordReader.next() );
+					}
 					
 					//Test if there was a number or only an i, if only i set imaginary to 1
 					try
@@ -129,11 +150,22 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
+						
+						//Skip lines that have individual numbers with two or more decimal points in them
+						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
+						Matcher theMatcher = thePattern.matcher(tempWord);
+						boolean containsPattern = theMatcher.find();
+						if(containsPattern == true)
+						{
+							continue;
+						}
+						
 						if(tempWord.equals("-"))
 						{
 							firstImaginary = -1.0;
 						}
-						else
+						else if(tempWord.equals(""))
 						{
 							firstImaginary = 1.0;
 						}
@@ -164,7 +196,11 @@ public class Main
 					
 					Scanner wordReader = new Scanner(secondWord);
 					
-					secondReal = Double.parseDouble(wordReader.next() );
+					//Check to see if there are two parts to the number so we don't put a lone imaginary in the realNumber part
+					if(firstWord.contains(" "))
+					{
+						secondReal = Double.parseDouble(wordReader.next() );
+					}
 					
 					//Test if there was a number or only an i, if only i set imaginary to 1
 					try
@@ -174,6 +210,17 @@ public class Main
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
+						
+						//Skip lines that have individual numbers with two or more decimal points in them
+						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
+						Matcher theMatcher = thePattern.matcher(tempWord);
+						boolean containsPattern = theMatcher.find();
+						if(containsPattern == true)
+						{
+							continue;
+						}
+						
 						if(tempWord.equals("-"))
 						{
 							secondImaginary = -1.0;
@@ -188,67 +235,75 @@ public class Main
 					wordReader.close();
 					
 				} // end of parsing second word and creating second number
-				
-				
-				//Perform the appropriate operation on both numbers
-				switch(operation)
-				{
-				case "+":
-					resultNumber = add(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "-":
-					resultNumber = subtract(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "*":
-					resultNumber = multiply(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "/":
-					try //In case a zero division happens
-					{
-					resultNumber = divide(firstNumber, secondNumber);
-					}
-					catch (ArithmeticException e)
-					{
-						continue;
-					}
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "<":
-					resultBool = lessThan(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-					
-				case ">":
-					resultBool = greaterThan(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-					
-				case "=":
-					resultBool = equals(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-				}
-				
-				
-				lineReader.close();
-			} catch (Exception e)
+			}
+			catch(NumberFormatException e)
 			{
+				//Line will be skipped due to a NumberFormatException in the word parsing process
 				e.printStackTrace();
-				System.out.println("Some unhandled exception happened. Moving on to next loop.");
 				continue;
 			}
+			catch(Exception e)
+			{
+				// Line will be skipped due to a some exception in the word parsing process
+				e.printStackTrace();
+				continue;
+			}
+			
+			
+			//Perform the appropriate operation on both numbers
+			switch(operation)
+			{
+			case "+":
+				resultNumber = add(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "-":
+				resultNumber = subtract(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "*":
+				resultNumber = multiply(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "/":
+				try //In case a zero division happens
+				{
+				resultNumber = divide(firstNumber, secondNumber);
+				}
+				catch (ArithmeticException e)
+				{
+					e.printStackTrace();
+					continue;
+				}
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "<":
+				resultBool = lessThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case ">":
+				resultBool = greaterThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case "=":
+				resultBool = equals(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+			}
+			
+			
+			lineReader.close();
+
 		} // end of while loop, current line processing
 		
 		
-	
-		//TODO: close scanners
+		
 		inputScanner.close();
 		fileReader.close();
 		writer.close();
@@ -359,7 +414,6 @@ public class Main
 	} // subtract() end
 	
 	
-	//TODO: see about the i's nullifying themselves and returning a proper result
 	// Checks parameter types and multiplies the numbers and returns a new Number object with the result
 	static Number multiply(Object first, Object second)
 	{
@@ -371,7 +425,13 @@ public class Main
 			double imaginary = ((Complex)first).getRealNumber() * ((Complex)second).getImaginaryNumber()
 					+ ((Complex)first).getImaginaryNumber() * ((Complex)second).getRealNumber();
 			
-			Number result = new Complex(real, imaginary);
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
+			
+			Number result = new Complex(real, imaginary);			
 			return result;
 		}
 		
@@ -379,6 +439,12 @@ public class Main
 		{
 			double real = ((Number)first).getRealNumber() * ((Complex)second).getRealNumber();
 			double imaginary = ((Number)first).getRealNumber() * ((Complex)second).getImaginaryNumber();
+			
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
 			
 			Number result = new Complex(real, imaginary);
 			return result;
@@ -388,6 +454,12 @@ public class Main
 		{
 			double real = ((Number)first).getRealNumber() * ((Complex)second).getRealNumber();
 			double imaginary = ((Number)first).getRealNumber() * ((Complex)second).getImaginaryNumber();
+			
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
 			
 			Number result = new Complex(real, imaginary);
 			return result;
@@ -419,7 +491,7 @@ public class Main
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
 			Complex result = (Complex)multiply(first, conjugate(second));
-			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + Math.pow(((Complex)second).getImaginaryNumber(), 2);
 			
 			result.setRealNumber(result.getRealNumber() / divisor);
 			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);
@@ -430,7 +502,7 @@ public class Main
 		if((first instanceof Number) && (second instanceof Complex) )
 		{
 			Complex result = (Complex)multiply(first, conjugate(second));
-			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + Math.pow(((Complex)second).getImaginaryNumber(), 2);
 			
 			result.setRealNumber(result.getRealNumber() / divisor);
 			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);
@@ -599,43 +671,28 @@ public class Main
 		
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
-			// ( (sqrt(1.real^2 + 1.imaginary^2)) < (sqrt(2.real^2 + 2.imaginary^2)) ) 
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Complex)first).getRealNumber(), 2) + Math.pow( ((Complex)first).getImaginaryNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Complex)second).getRealNumber(), 2) + Math.pow( ((Complex)second).getImaginaryNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Complex)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Number) && (second instanceof Complex) )
 		{
-			// (1.real < (sqrt(2.real^2 + 2.imaginary^2)) )
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Number)first).getRealNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Complex)second).getRealNumber(), 2) + Math.pow( ((Complex)second).getImaginaryNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Number)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Complex) && (second instanceof Number) )
 		{
-			// ( (sqrt(1.real^2 + 1.imaginary^2)) < 2.real)
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Complex)first).getRealNumber(), 2) + Math.pow( ((Complex)first).getImaginaryNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Number)second).getRealNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Complex)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Number) && (second instanceof Number) )
 		{
-			Boolean result = ( ((Number)first).getRealNumber() == ((Number)second).getRealNumber() )? true: false;
+			Boolean result = ((Number)first).equals(second);
 			
 			return result;
 		}
