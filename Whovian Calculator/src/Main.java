@@ -74,7 +74,6 @@ public class Main
 			catch(NoSuchElementException e)
 			{
 				// Skip line if number of operands+operator less than 3. ex: one or two words on a line
-				e.printStackTrace();
 				continue;
 			}
 			
@@ -150,8 +149,6 @@ public class Main
 					}
 					catch(Exception e)
 					{
-						e.printStackTrace();
-						
 						//Skip lines that have individual numbers with two or more decimal points in them
 						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
 						Matcher theMatcher = thePattern.matcher(tempWord);
@@ -210,8 +207,6 @@ public class Main
 					}
 					catch(Exception e)
 					{
-						e.printStackTrace();
-						
 						//Skip lines that have individual numbers with two or more decimal points in them
 						Pattern thePattern = Pattern.compile(".+[.].+[.].+");
 						Matcher theMatcher = thePattern.matcher(tempWord);
@@ -239,13 +234,11 @@ public class Main
 			catch(NumberFormatException e)
 			{
 				//Line will be skipped due to a NumberFormatException in the word parsing process
-				e.printStackTrace();
 				continue;
 			}
 			catch(Exception e)
 			{
 				// Line will be skipped due to a some exception in the word parsing process
-				e.printStackTrace();
 				continue;
 			}
 			
@@ -275,7 +268,6 @@ public class Main
 				}
 				catch (ArithmeticException e)
 				{
-					e.printStackTrace();
 					continue;
 				}
 				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
