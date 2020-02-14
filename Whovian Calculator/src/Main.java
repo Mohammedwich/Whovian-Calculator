@@ -19,7 +19,7 @@ public class Main
 				,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 		
 		String fileName;
-		Scanner inputScanner = new Scanner(System.in);
+		Scanner inputScanner = new Scanner(System.in); 
 		
 		System.out.println("Enter a file name to process: ");
 		fileName = inputScanner.nextLine();		
