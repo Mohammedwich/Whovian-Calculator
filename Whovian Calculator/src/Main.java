@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 
 public class Main
 {
-	public static void main(String args[]) throws IOException 
+	public static void main(String args[]) throws IOException
 	{
 		// This array will be used to skip lines containing these characters
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
