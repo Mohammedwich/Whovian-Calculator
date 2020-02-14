@@ -54,196 +54,189 @@ public class Main
 		// original line followed by \t and the operation result into the output file.
 		while(fileReader.hasNextLine())
 		{
-			try
+			String currentLine = fileReader.nextLine();
+			Scanner lineReader = new Scanner(currentLine);
+			
+			//first and second word will hold the values as strings
+			String firstWord = lineReader.next();
+			String operation = lineReader.next();
+			String secondWord = lineReader.next();
+			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
+			
+			//skip line if invalid operator
+			
+			if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
+					!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
 			{
-				String currentLine = fileReader.nextLine();
-				Scanner lineReader = new Scanner(currentLine);
-				
-				//first and second word will hold the values as strings
-				String firstWord = lineReader.next();
-				String operation = lineReader.next();
-				String secondWord = lineReader.next();
-				String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
-				
-				//skip line if invalid operator
-				
-				if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
-						!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
-				{
-					continue;
-				}
-				
-				
-				//skip line if any non-i characters are in the line
-				Boolean skipFlag = false;
-				for(String currentChar : invalidLetters)
-				{
-					if(currentLine.contains(currentChar))
-					{
-						skipFlag = true;
-					}
-				}
-				if(skipFlag == true)
-				{
-					continue;
-				}
-				
-				// These will hold the parsed numbers
-				double firstReal = 0;
-				double firstImaginary = 1;	// Set to 1 so we can pass a 1 if just i
-				double secondReal = 0;
-				double secondImaginary = 1;
-				
-				// These will hold the created object that will be constructed using first/secondValue
-				Number firstNumber;
-				Number secondNumber;	
-				Number resultNumber;
-				Boolean resultBool;
-				
-				// Parse the first word and create a number object out of the data
-				if(!(firstWord.contains("i")) )
-				{
-					firstReal = Double.parseDouble(firstWord);
-					firstNumber = new Number(firstReal);
-				}
-				else
-				{
-					firstWord = firstWord.replace("+", " ");
-					firstWord = firstWord.replace("-", " -");
-					firstWord = firstWord.replaceFirst("i", " ");
-					//if we have more than 1 i character, skip line
-					if(firstWord.contains("i"))
-					{
-						continue;
-					}
-					
-					Scanner wordReader = new Scanner(firstWord);
-					
-					firstReal = Double.parseDouble(wordReader.next() );
-					
-					//Test if there was a number or only an i, if only i set imaginary to 1
-					try
-					{
-						tempWord = wordReader.next(); // In case we have a minus sign by itself
-						firstImaginary = Double.parseDouble(tempWord);
-					}
-					catch(Exception e)
-					{
-						if(tempWord.equals("-"))
-						{
-							firstImaginary = -1.0;
-						}
-						else
-						{
-							firstImaginary = 1.0;
-						}
-					}
-					
-					firstNumber = new Complex(firstReal, firstImaginary);
-					wordReader.close();
-					
-				} // end of parsing first word and creating first number
-				
-				
-				// Parse the second word and create a number object out of the data
-				if(!(secondWord.contains("i")) )
-				{
-					secondReal = Double.parseDouble(secondWord);
-					secondNumber = new Number(secondReal);
-				}
-				else
-				{
-					secondWord = secondWord.replace("+", " ");
-					secondWord = secondWord.replace("-", " -");
-					secondWord = secondWord.replaceFirst("i", " ");
-					//if we have more than 1 i character, skip line
-					if(secondWord.contains("i"))
-					{
-						continue;
-					}
-					
-					Scanner wordReader = new Scanner(secondWord);
-					
-					secondReal = Double.parseDouble(wordReader.next() );
-					
-					//Test if there was a number or only an i, if only i set imaginary to 1
-					try
-					{
-						tempWord = wordReader.next(); // In case we have a minus sign by itself
-						secondImaginary = Double.parseDouble(tempWord);
-					}
-					catch(Exception e)
-					{
-						if(tempWord.equals("-"))
-						{
-							secondImaginary = -1.0;
-						}
-						else
-						{
-							secondImaginary = 1.0;
-						}
-					}
-					
-					secondNumber = new Complex(secondReal, secondImaginary);
-					wordReader.close();
-					
-				} // end of parsing second word and creating second number
-				
-				
-				//Perform the appropriate operation on both numbers
-				switch(operation)
-				{
-				case "+":
-					resultNumber = add(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "-":
-					resultNumber = subtract(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "*":
-					resultNumber = multiply(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "/":
-					try //In case a zero division happens
-					{
-					resultNumber = divide(firstNumber, secondNumber);
-					}
-					catch (ArithmeticException e)
-					{
-						continue;
-					}
-					writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
-					break;
-					
-				case "<":
-					resultBool = lessThan(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-					
-				case ">":
-					resultBool = greaterThan(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-					
-				case "=":
-					resultBool = equals(firstNumber, secondNumber);
-					writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
-					break;
-				}
-				
-				
-				lineReader.close();
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				System.out.println("Some unhandled exception happened. Moving on to next loop.");
 				continue;
 			}
+			
+			
+			//skip line if any non-i characters are in the line
+			Boolean skipFlag = false;
+			for(String currentChar : invalidLetters)
+			{
+				if(currentLine.contains(currentChar))
+				{
+					skipFlag = true;
+				}
+			}
+			if(skipFlag == true)
+			{
+				continue;
+			}
+			
+			// These will hold the parsed numbers
+			double firstReal = 0;
+			double firstImaginary = 1;	// Set to 1 so we can pass a 1 if just i
+			double secondReal = 0;
+			double secondImaginary = 1;
+			
+			// These will hold the created object that will be constructed using first/secondValue
+			Number firstNumber;
+			Number secondNumber;	
+			Number resultNumber;
+			Boolean resultBool;
+			
+			// Parse the first word and create a number object out of the data
+			if(!(firstWord.contains("i")) )
+			{
+				firstReal = Double.parseDouble(firstWord);
+				firstNumber = new Number(firstReal);
+			}
+			else
+			{
+				firstWord = firstWord.replace("+", " ");
+				firstWord = firstWord.replace("-", " -");
+				firstWord = firstWord.replaceFirst("i", " ");
+				//if we have more than 1 i character, skip line
+				if(firstWord.contains("i"))
+				{
+					continue;
+				}
+				
+				Scanner wordReader = new Scanner(firstWord);
+				
+				firstReal = Double.parseDouble(wordReader.next() );
+				
+				//Test if there was a number or only an i, if only i set imaginary to 1
+				try
+				{
+					tempWord = wordReader.next(); // In case we have a minus sign by itself
+					firstImaginary = Double.parseDouble(tempWord);
+				}
+				catch(Exception e)
+				{
+					if(tempWord.equals("-"))
+					{
+						firstImaginary = -1.0;
+					}
+					else
+					{
+						firstImaginary = 1.0;
+					}
+				}
+				
+				firstNumber = new Complex(firstReal, firstImaginary);
+				wordReader.close();
+				
+			} // end of parsing first word and creating first number
+			
+			
+			// Parse the second word and create a number object out of the data
+			if(!(secondWord.contains("i")) )
+			{
+				secondReal = Double.parseDouble(secondWord);
+				secondNumber = new Number(secondReal);
+			}
+			else
+			{
+				secondWord = secondWord.replace("+", " ");
+				secondWord = secondWord.replace("-", " -");
+				secondWord = secondWord.replaceFirst("i", " ");
+				//if we have more than 1 i character, skip line
+				if(secondWord.contains("i"))
+				{
+					continue;
+				}
+				
+				Scanner wordReader = new Scanner(secondWord);
+				
+				secondReal = Double.parseDouble(wordReader.next() );
+				
+				//Test if there was a number or only an i, if only i set imaginary to 1
+				try
+				{
+					tempWord = wordReader.next(); // In case we have a minus sign by itself
+					secondImaginary = Double.parseDouble(tempWord);
+				}
+				catch(Exception e)
+				{
+					if(tempWord.equals("-"))
+					{
+						secondImaginary = -1.0;
+					}
+					else
+					{
+						secondImaginary = 1.0;
+					}
+				}
+				
+				secondNumber = new Complex(secondReal, secondImaginary);
+				wordReader.close();
+				
+			} // end of parsing second word and creating second number
+			
+			
+			//Perform the appropriate operation on both numbers
+			switch(operation)
+			{
+			case "+":
+				resultNumber = add(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "-":
+				resultNumber = subtract(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "*":
+				resultNumber = multiply(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "/":
+				try //In case a zero division happens
+				{
+				resultNumber = divide(firstNumber, secondNumber);
+				}
+				catch (ArithmeticException e)
+				{
+					continue;
+				}
+				writer.write(currentLine + "\t" + resultNumber.toString() + "\n" );
+				break;
+				
+			case "<":
+				resultBool = lessThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case ">":
+				resultBool = greaterThan(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+				
+			case "=":
+				resultBool = equals(firstNumber, secondNumber);
+				writer.write(currentLine + "\t" + resultBool.toString() + "\n" );
+				break;
+			}
+			
+			
+			lineReader.close();
+
 		} // end of while loop, current line processing
 		
 		
@@ -599,43 +592,28 @@ public class Main
 		
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
-			// ( (sqrt(1.real^2 + 1.imaginary^2)) < (sqrt(2.real^2 + 2.imaginary^2)) ) 
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Complex)first).getRealNumber(), 2) + Math.pow( ((Complex)first).getImaginaryNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Complex)second).getRealNumber(), 2) + Math.pow( ((Complex)second).getImaginaryNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Complex)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Number) && (second instanceof Complex) )
 		{
-			// (1.real < (sqrt(2.real^2 + 2.imaginary^2)) )
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Number)first).getRealNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Complex)second).getRealNumber(), 2) + Math.pow( ((Complex)second).getImaginaryNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Number)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Complex) && (second instanceof Number) )
 		{
-			// ( (sqrt(1.real^2 + 1.imaginary^2)) < 2.real)
-			Boolean result = (
-					(Math.sqrt(Math.pow( ((Complex)first).getRealNumber(), 2) + Math.pow( ((Complex)first).getImaginaryNumber(), 2)))
-					== (Math.sqrt(Math.pow( ((Number)second).getRealNumber(), 2)))
-					)
-					? true: false;
+			Boolean result = ((Complex)first).equals(second);
 			
 			return result;
 		}
 		
 		if((first instanceof Number) && (second instanceof Number) )
 		{
-			Boolean result = ( ((Number)first).getRealNumber() == ((Number)second).getRealNumber() )? true: false;
+			Boolean result = ((Number)first).equals(second);
 			
 			return result;
 		}

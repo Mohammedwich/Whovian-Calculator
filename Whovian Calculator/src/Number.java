@@ -40,16 +40,32 @@ public class Number
 	}
 	
 	
-	public boolean equals(double someNum)
+	public boolean equals(Object someObject)
 	{
-		if(realNumber == someNum)
-		{
-			return true;
-		}
-		else
+		if(someObject instanceof Complex)
 		{
 			return false;
 		}
+		
+		if(!(someObject instanceof Number))
+		{
+			return false;
+		}
+		
+		if(someObject instanceof Number)
+		{
+			if(realNumber == ((Number)someObject).getRealNumber() )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		return false; //Incase none of the cases match for some reason
+		
 	}
 	
 	public boolean equals(String someNum)
