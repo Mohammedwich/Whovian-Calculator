@@ -37,7 +37,7 @@ public class Complex extends Number
 		
 		if(realNumber != 0)
 		{
-			BigDecimal theNum = new BigDecimal(getRealNumber()).setScale(2);
+			BigDecimal theNum = new BigDecimal(getRealNumber()).setScale(2, RoundingMode.HALF_UP);
 			string.append(theNum);	//append real part to the string, can be zero
 		}
 		
@@ -48,7 +48,7 @@ public class Complex extends Number
 			
 			if(imaginaryNumber != -1)	// Don't append coefficient when it is -1
 			{
-				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2, RoundingMode.HALF_UP);
 				string.append(theNum);
 			}
 			
@@ -63,7 +63,7 @@ public class Complex extends Number
 			
 			if(imaginaryNumber != 1)	// Don't append coefficient when it is 1
 			{
-				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2);
+				BigDecimal theNum = new BigDecimal(Math.abs(imaginaryNumber)).setScale(2, RoundingMode.HALF_UP);
 				string.append(theNum);
 			}
 			

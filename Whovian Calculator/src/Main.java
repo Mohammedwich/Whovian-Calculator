@@ -13,7 +13,6 @@ public class Main
 	//TODO: Do something about extra numbers on the line
 	//TODO: Do something about numbers like 3.5.6.7
 	//TODO: See about formatting on FileWriter
-	//TODO: Magnitude is only used for less than and greater than; for equality, you need to check that the two real components are equal and the two imaginary components are equal.
 	public static void main(String args[]) throws IOException 
 	{
 		String [] invalidLetters = {"a","b","c","d","e","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
@@ -64,7 +63,6 @@ public class Main
 			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
 			
 			//skip line if invalid operator
-			
 			if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
 					!operation.equals("<") && !operation.equals(">") && !operation.equals("=") )
 			{
@@ -98,94 +96,110 @@ public class Main
 			Number resultNumber;
 			Boolean resultBool;
 			
-			// Parse the first word and create a number object out of the data
-			if(!(firstWord.contains("i")) )
+			//skip line if the parsing process throws an exception
+			try
 			{
-				firstReal = Double.parseDouble(firstWord);
-				firstNumber = new Number(firstReal);
+				// Parse the first word and create a number object out of the data
+				if(!(firstWord.contains("i")) )
+				{
+					firstReal = Double.parseDouble(firstWord);
+					firstNumber = new Number(firstReal);
+				}
+				else
+				{
+					firstWord = firstWord.replace("+", " ");
+					firstWord = firstWord.replace("-", " -");
+					firstWord = firstWord.replaceFirst("i", " ");
+					//if we have more than 1 i character, skip line
+					if(firstWord.contains("i"))
+					{
+						continue;
+					}
+					
+					Scanner wordReader = new Scanner(firstWord);
+					
+					firstReal = Double.parseDouble(wordReader.next() );
+					
+					//Test if there was a number or only an i, if only i set imaginary to 1
+					try
+					{
+						tempWord = wordReader.next(); // In case we have a minus sign by itself
+						firstImaginary = Double.parseDouble(tempWord);
+					}
+					catch(Exception e)
+					{
+						if(tempWord.equals("-"))
+						{
+							firstImaginary = -1.0;
+						}
+						else
+						{
+							firstImaginary = 1.0;
+						}
+					}
+					
+					firstNumber = new Complex(firstReal, firstImaginary);
+					wordReader.close();
+					
+				} // end of parsing first word and creating first number
+				
+				
+				// Parse the second word and create a number object out of the data
+				if(!(secondWord.contains("i")) )
+				{
+					secondReal = Double.parseDouble(secondWord);
+					secondNumber = new Number(secondReal);
+				}
+				else
+				{
+					secondWord = secondWord.replace("+", " ");
+					secondWord = secondWord.replace("-", " -");
+					secondWord = secondWord.replaceFirst("i", " ");
+					//if we have more than 1 i character, skip line
+					if(secondWord.contains("i"))
+					{
+						continue;
+					}
+					
+					Scanner wordReader = new Scanner(secondWord);
+					
+					secondReal = Double.parseDouble(wordReader.next() );
+					
+					//Test if there was a number or only an i, if only i set imaginary to 1
+					try
+					{
+						tempWord = wordReader.next(); // In case we have a minus sign by itself
+						secondImaginary = Double.parseDouble(tempWord);
+					}
+					catch(Exception e)
+					{
+						if(tempWord.equals("-"))
+						{
+							secondImaginary = -1.0;
+						}
+						else
+						{
+							secondImaginary = 1.0;
+						}
+					}
+					
+					secondNumber = new Complex(secondReal, secondImaginary);
+					wordReader.close();
+					
+				} // end of parsing second word and creating second number
 			}
-			else
+			catch(NumberFormatException e)
 			{
-				firstWord = firstWord.replace("+", " ");
-				firstWord = firstWord.replace("-", " -");
-				firstWord = firstWord.replaceFirst("i", " ");
-				//if we have more than 1 i character, skip line
-				if(firstWord.contains("i"))
-				{
-					continue;
-				}
-				
-				Scanner wordReader = new Scanner(firstWord);
-				
-				firstReal = Double.parseDouble(wordReader.next() );
-				
-				//Test if there was a number or only an i, if only i set imaginary to 1
-				try
-				{
-					tempWord = wordReader.next(); // In case we have a minus sign by itself
-					firstImaginary = Double.parseDouble(tempWord);
-				}
-				catch(Exception e)
-				{
-					if(tempWord.equals("-"))
-					{
-						firstImaginary = -1.0;
-					}
-					else
-					{
-						firstImaginary = 1.0;
-					}
-				}
-				
-				firstNumber = new Complex(firstReal, firstImaginary);
-				wordReader.close();
-				
-			} // end of parsing first word and creating first number
-			
-			
-			// Parse the second word and create a number object out of the data
-			if(!(secondWord.contains("i")) )
-			{
-				secondReal = Double.parseDouble(secondWord);
-				secondNumber = new Number(secondReal);
+				System.out.println("Line will be skipped due to a NumberFormatException in the word parsing process");
+				System.out.flush();
+				continue;
 			}
-			else
+			catch(Exception e)
 			{
-				secondWord = secondWord.replace("+", " ");
-				secondWord = secondWord.replace("-", " -");
-				secondWord = secondWord.replaceFirst("i", " ");
-				//if we have more than 1 i character, skip line
-				if(secondWord.contains("i"))
-				{
-					continue;
-				}
-				
-				Scanner wordReader = new Scanner(secondWord);
-				
-				secondReal = Double.parseDouble(wordReader.next() );
-				
-				//Test if there was a number or only an i, if only i set imaginary to 1
-				try
-				{
-					tempWord = wordReader.next(); // In case we have a minus sign by itself
-					secondImaginary = Double.parseDouble(tempWord);
-				}
-				catch(Exception e)
-				{
-					if(tempWord.equals("-"))
-					{
-						secondImaginary = -1.0;
-					}
-					else
-					{
-						secondImaginary = 1.0;
-					}
-				}
-				
-				secondNumber = new Complex(secondReal, secondImaginary);
-				wordReader.close();
-				
-			} // end of parsing second word and creating second number
+				System.out.println("Line will be skipped due to a some exception in the word parsing process");
+				System.out.flush();
+				continue;
+			}
 			
 			
 			//Perform the appropriate operation on both numbers
@@ -412,7 +426,7 @@ public class Main
 		if((first instanceof Complex) && (second instanceof Complex) )
 		{
 			Complex result = (Complex)multiply(first, conjugate(second));
-			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + Math.pow(((Complex)second).getImaginaryNumber(), 2);
 			
 			result.setRealNumber(result.getRealNumber() / divisor);
 			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);
@@ -423,7 +437,7 @@ public class Main
 		if((first instanceof Number) && (second instanceof Complex) )
 		{
 			Complex result = (Complex)multiply(first, conjugate(second));
-			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + 1;
+			double divisor = Math.pow(((Complex)second).getRealNumber(), 2) + Math.pow(((Complex)second).getImaginaryNumber(), 2);
 			
 			result.setRealNumber(result.getRealNumber() / divisor);
 			result.setImaginaryNumber(result.getImaginaryNumber() / divisor);

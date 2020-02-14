@@ -32,7 +32,7 @@ public class Number
 	public String toString()
 	{
 		StringBuilder string = new StringBuilder();
-		BigDecimal theNum = new BigDecimal(realNumber).setScale(2);
+		BigDecimal theNum = new BigDecimal(realNumber).setScale(2, RoundingMode.HALF_UP);
 		string.append(theNum);
 		
 		String result = string.toString();
