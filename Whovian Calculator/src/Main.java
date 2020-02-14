@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
@@ -57,10 +58,25 @@ public class Main
 			Scanner lineReader = new Scanner(currentLine);
 			
 			//first and second word will hold the values as strings
-			String firstWord = lineReader.next();
-			String operation = lineReader.next();
-			String secondWord = lineReader.next();
-			String tempWord = ""; //Will be used to hold minus sign or a full number when setting the imaginary part
+			String firstWord;
+			String operation;
+			String secondWord;
+			String tempWord; //Will be used to hold minus sign or a full number when setting the imaginary part
+			
+			//Skip line if we don't have enough operands to work with
+			try
+			{
+				firstWord = lineReader.next();
+				operation = lineReader.next();
+				secondWord = lineReader.next();
+				tempWord = "";
+			}
+			catch(NoSuchElementException e)
+			{
+				System.out.println("NoSuchElement exception: Invalid number of operands. Skipping line.");
+				System.out.flush();
+				continue;
+			}
 			
 			//skip line if invalid operator
 			if(!operation.equals("+") && !operation.equals("-") && !operation.equals("*") && !operation.equals("/") && 
@@ -86,9 +102,9 @@ public class Main
 			
 			// These will hold the parsed numbers
 			double firstReal = 0;
-			double firstImaginary = 1;	// Set to 1 so we can pass a 1 if just i
+			double firstImaginary = 0;
 			double secondReal = 0;
-			double secondImaginary = 1;
+			double secondImaginary = 0;
 			
 			// These will hold the created object that will be constructed using first/secondValue
 			Number firstNumber;
@@ -109,16 +125,22 @@ public class Main
 				{
 					firstWord = firstWord.replace("+", " ");
 					firstWord = firstWord.replace("-", " -");
-					firstWord = firstWord.replaceFirst("i", " ");
-					//if we have more than 1 i character, skip line
+					firstWord = firstWord.replaceFirst("i", ""); //TODO: remove this line if needed after fixing issue with single imaginary
+					
+					//if we have more than 1 i character, skip line					
 					if(firstWord.contains("i"))
 					{
 						continue;
 					}
 					
+					
 					Scanner wordReader = new Scanner(firstWord);
 					
-					firstReal = Double.parseDouble(wordReader.next() );
+					//Check to see if there are two parts to the number so we don't put a lone imaginary in the realNumber part
+					if(firstWord.contains(" "))
+					{
+						firstReal = Double.parseDouble(wordReader.next() );
+					}
 					
 					//Test if there was a number or only an i, if only i set imaginary to 1
 					try
@@ -163,7 +185,11 @@ public class Main
 					
 					Scanner wordReader = new Scanner(secondWord);
 					
-					secondReal = Double.parseDouble(wordReader.next() );
+					//Check to see if there are two parts to the number so we don't put a lone imaginary in the realNumber part
+					if(firstWord.contains(" "))
+					{
+						secondReal = Double.parseDouble(wordReader.next() );
+					}
 					
 					//Test if there was a number or only an i, if only i set imaginary to 1
 					try
@@ -378,7 +404,13 @@ public class Main
 			double imaginary = ((Complex)first).getRealNumber() * ((Complex)second).getImaginaryNumber()
 					+ ((Complex)first).getImaginaryNumber() * ((Complex)second).getRealNumber();
 			
-			Number result = new Complex(real, imaginary);
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
+			
+			Number result = new Complex(real, imaginary);			
 			return result;
 		}
 		
@@ -386,6 +418,12 @@ public class Main
 		{
 			double real = ((Number)first).getRealNumber() * ((Complex)second).getRealNumber();
 			double imaginary = ((Number)first).getRealNumber() * ((Complex)second).getImaginaryNumber();
+			
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
 			
 			Number result = new Complex(real, imaginary);
 			return result;
@@ -395,6 +433,12 @@ public class Main
 		{
 			double real = ((Number)first).getRealNumber() * ((Complex)second).getRealNumber();
 			double imaginary = ((Number)first).getRealNumber() * ((Complex)second).getImaginaryNumber();
+			
+			if(imaginary == 0)
+			{
+				Number result = new Number(real);
+				return result;
+			}
 			
 			Number result = new Complex(real, imaginary);
 			return result;
